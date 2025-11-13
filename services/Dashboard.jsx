@@ -1,31 +1,23 @@
 import React, { useState } from 'react';
-import type { FishingData, Location } from '../types';
-import WeatherCard from './WeatherCard';
-import FishCard from './FishCard';
-import SolunarCard from './SolunarCard';
-import DepthCard from './DepthCard';
-import HistoryModal from './HistoryModal';
-import { logCatch } from '../services/catchLogService';
+import WeatherCard from './WeatherCard.jsx';
+import FishCard from './FishCard.jsx';
+import SolunarCard from './SolunarCard.jsx';
+import DepthCard from './DepthCard.jsx';
+import HistoryModal from './HistoryModal.jsx';
+import { logCatch } from '../services/catchLogService.js';
 
 
-interface DashboardProps {
-  fishingData: FishingData;
-  onSpeak: (text: string) => void;
-  isSpeaking: boolean;
-  location: Location | null;
-}
-
-const Dashboard: React.FC<DashboardProps> = ({ fishingData, onSpeak, isSpeaking, location }) => {
+const Dashboard = ({ fishingData, onSpeak, isSpeaking, location }) => {
   const { weather, fish, solunar, depthSuggestion } = fishingData;
-  const [historyModalFish, setHistoryModalFish] = useState<string | null>(null);
+  const [historyModalFish, setHistoryModalFish] = useState(null);
 
-  const handleLogCatch = (fishName: string) => {
+  const handleLogCatch = (fishName) => {
     if (location) {
       logCatch(fishName, location);
     }
   };
 
-  const handleViewHistory = (fishName: string) => {
+  const handleViewHistory = (fishName) => {
     setHistoryModalFish(fishName);
   };
 

@@ -1,9 +1,7 @@
-import type { Location, CatchLog } from '../types';
-
 const CATCH_LOG_KEY = 'reelTimeCatchLog';
 
 // Helper to get all logs
-const getAllLogs = (): CatchLog[] => {
+const getAllLogs = () => {
   try {
     const logs = localStorage.getItem(CATCH_LOG_KEY);
     return logs ? JSON.parse(logs) : [];
@@ -14,7 +12,7 @@ const getAllLogs = (): CatchLog[] => {
 };
 
 // Helper to save all logs
-const saveAllLogs = (logs: CatchLog[]): void => {
+const saveAllLogs = (logs) => {
   try {
     localStorage.setItem(CATCH_LOG_KEY, JSON.stringify(logs));
   } catch (error) {
@@ -22,10 +20,10 @@ const saveAllLogs = (logs: CatchLog[]): void => {
   }
 };
 
-export const logCatch = (fishName: string, location: Location): void => {
+export const logCatch = (fishName, location) => {
   if (!location) return;
   const allLogs = getAllLogs();
-  const newLog: CatchLog = {
+  const newLog = {
     fishName,
     date: new Date().toISOString(),
     location,
@@ -35,7 +33,7 @@ export const logCatch = (fishName: string, location: Location): void => {
 };
 
 // Returns logs for a specific fish within a certain radius of a location
-export const getCatchHistory = (fishName: string, currentLocation: Location): CatchLog[] => {
+export const getCatchHistory = (fishName, currentLocation) => {
   const allLogs = getAllLogs();
   // A radius of 0.1 degrees is roughly 11km, a reasonable area for "current location".
   const locationRadius = 0.1; 
@@ -46,7 +44,7 @@ export const getCatchHistory = (fishName: string, currentLocation: Location): Ca
   );
 };
 
-export const getTodaysCatches = (fishName: string, currentLocation: Location): CatchLog[] => {
+export const getTodaysCatches = (fishName, currentLocation) => {
   const todaysDate = new Date().toISOString().split('T')[0];
   const history = getCatchHistory(fishName, currentLocation);
 
@@ -54,12 +52,12 @@ export const getTodaysCatches = (fishName: string, currentLocation: Location): C
 };
 
 
-export const calculateSuccessStats = (history: CatchLog[]): { totalCatches: number, uniqueTripDays: number } => {
+export const calculateSuccessStats = (history) => {
   if (history.length === 0) {
     return { totalCatches: 0, uniqueTripDays: 0 };
   }
 
-  const uniqueDays = new Set<string>();
+  const uniqueDays = new Set();
   history.forEach(log => {
     uniqueDays.add(new Date(log.date).toISOString().split('T')[0]);
   });

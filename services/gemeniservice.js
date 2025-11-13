@@ -1,11 +1,10 @@
 import { GoogleGenAI, Type, Modality } from '@google/genai';
-import type { Location, FishingData } from '../types';
 
-let ai: GoogleGenAI | null = null;
-let apiKeyPromise: Promise<string> | null = null;
+let ai = null;
+let apiKeyPromise = null;
 
 // This function fetches the API key from our secure serverless endpoint
-const fetchApiKey = async (): Promise<string> => {
+const fetchApiKey = async () => {
     try {
         const response = await fetch('/api/key');
         if (!response.ok) {
@@ -22,7 +21,7 @@ const fetchApiKey = async (): Promise<string> => {
 
 // This function initializes the GoogleGenAI client with the fetched key.
 // It ensures we only fetch the key once and reuse the client.
-const getAiInstance = async (): Promise<GoogleGenAI> => {
+const getAiInstance = async () => {
   if (ai) {
     return ai;
   }
@@ -111,7 +110,7 @@ const fishingForecastSchema = {
   required: ['weather', 'fish', 'solunar', 'depthSuggestion']
 };
 
-export const getFishingForecast = async (location: Location): Promise<FishingData> => {
+export const getFishingForecast = async (location) => {
   const geminiAi = await getAiInstance();
 
   const prompt = `
@@ -143,7 +142,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
   return JSON.parse(jsonText);
 };
 
-export const getTextToSpeechAudio = async (text: string): Promise<string | undefined> => {
+export const getTextToSpeechAudio = async (text) => {
     const geminiAi = await getAiInstance();
     
     const response = await geminiAi.models.generateContent({

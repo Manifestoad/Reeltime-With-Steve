@@ -1,13 +1,13 @@
-let audioContext: AudioContext | null = null;
+let audioContext = null;
 
-const getAudioContext = (): AudioContext => {
+const getAudioContext = () => {
   if (!audioContext) {
-    audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 24000 });
   }
   return audioContext;
 };
 
-function decode(base64: string): Uint8Array {
+function decode(base64) {
   const binaryString = atob(base64);
   const len = binaryString.length;
   const bytes = new Uint8Array(len);
@@ -18,11 +18,11 @@ function decode(base64: string): Uint8Array {
 }
 
 async function decodeAudioData(
-  data: Uint8Array,
-  ctx: AudioContext,
-  sampleRate: number,
-  numChannels: number,
-): Promise<AudioBuffer> {
+  data,
+  ctx,
+  sampleRate,
+  numChannels,
+) {
   const dataInt16 = new Int16Array(data.buffer);
   const frameCount = dataInt16.length / numChannels;
   const buffer = ctx.createBuffer(numChannels, frameCount, sampleRate);
@@ -36,7 +36,7 @@ async function decodeAudioData(
   return buffer;
 }
 
-export const playAudio = async (base64Audio: string): Promise<void> => {
+export const playAudio = async (base64Audio) => {
   return new Promise(async (resolve, reject) => {
     try {
         const ctx = getAudioContext();

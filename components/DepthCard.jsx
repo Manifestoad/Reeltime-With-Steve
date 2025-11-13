@@ -1,15 +1,8 @@
 import React from 'react';
-import type { DepthSuggestion } from '../types';
-import SpeakerIcon from './common/SpeakerIcon';
-import Card from './common/Card';
+import SpeakerIcon from './common/SpeakerIcon.jsx';
+import Card from './common/Card.jsx';
 
-interface DepthCardProps {
-  depthSuggestion: DepthSuggestion;
-  onSpeak: (text: string) => void;
-  isSpeaking: boolean;
-}
-
-const DepthCard: React.FC<DepthCardProps> = ({ depthSuggestion, onSpeak, isSpeaking }) => {
+const DepthCard = ({ depthSuggestion, onSpeak, isSpeaking }) => {
   const { recommendation, reasoning } = depthSuggestion;
 
   const handleSpeak = () => {

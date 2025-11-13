@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getCatchHistory, calculateSuccessStats } from '../services/catchLogService';
-import type { Location, CatchLog } from '../types';
-import Card from './common/Card';
-import Spinner from './common/Spinner';
+import { getCatchHistory, calculateSuccessStats } from '../services/catchLogService.js';
+import Card from './common/Card.jsx';
+import Spinner from './common/Spinner.jsx';
 
-interface HistoryModalProps {
-  fishName: string;
-  location: Location | null;
-  onClose: () => void;
-}
-
-const HistoryModal: React.FC<HistoryModalProps> = ({ fishName, location, onClose }) => {
-  const [history, setHistory] = useState<CatchLog[]>([]);
-  const [stats, setStats] = useState<{ totalCatches: number; uniqueTripDays: number } | null>(null);
+const HistoryModal = ({ fishName, location, onClose }) => {
+  const [history, setHistory] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +25,7 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ fishName, location, onClose
   }, [fishName, location]);
   
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         onClose();
       }

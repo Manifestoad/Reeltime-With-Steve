@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { FishingData, Location } from './types';
-import { getFishingForecast, getTextToSpeechAudio } from './services/geminiService';
-import { playAudio } from './services/audioService';
-import Dashboard from './components/Dashboard';
-import Spinner from './components/common/Spinner';
-import Logo from './components/common/Logo';
+import { getFishingForecast, getTextToSpeechAudio } from './services/geminiService.js';
+import { playAudio } from './services/audioService.js';
+import Dashboard from './components/Dashboard.jsx';
+import Spinner from './components/common/Spinner.jsx';
+import Logo from './components/common/Logo.jsx';
 
-const App: React.FC = () => {
-  const [location, setLocation] = useState<Location | null>(null);
-  const [fishingData, setFishingData] = useState<FishingData | null>(null);
-  const [loading, setLoading] = useState<string>('Waiting for location permission...');
-  const [error, setError] = useState<string | null>(null);
+const App = () => {
+  const [location, setLocation] = useState(null);
+  const [fishingData, setFishingData] = useState(null);
+  const [loading, setLoading] = useState('Waiting for location permission...');
+  const [error, setError] = useState(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
 
   const requestLocation = useCallback(() => {
@@ -31,8 +30,6 @@ const App: React.FC = () => {
     );
   }, []);
 
-  // This is now simplified. It just requests the location on startup.
-  // The complex API key checking is no longer needed here.
   useEffect(() => {
     requestLocation();
   }, [requestLocation]);
@@ -64,7 +61,7 @@ const App: React.FC = () => {
     }
   }, [location]);
 
-  const handleSpeak = useCallback(async (text: string) => {
+  const handleSpeak = useCallback(async (text) => {
     if (isSpeaking) return;
     setIsSpeaking(true);
     try {

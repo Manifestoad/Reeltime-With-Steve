@@ -1,15 +1,8 @@
 import React from 'react';
-import type { Solunar } from '../types';
-import SpeakerIcon from './common/SpeakerIcon';
-import Card from './common/Card';
+import SpeakerIcon from './common/SpeakerIcon.jsx';
+import Card from './common/Card.jsx';
 
-interface SolunarCardProps {
-  solunar: Solunar;
-  onSpeak: (text: string) => void;
-  isSpeaking: boolean;
-}
-
-const SolunarCard: React.FC<SolunarCardProps> = ({ solunar, onSpeak, isSpeaking }) => {
+const SolunarCard = ({ solunar, onSpeak, isSpeaking }) => {
   const { majorTimes, minorTimes, moonPhase } = solunar;
   
   const handleSpeak = () => {

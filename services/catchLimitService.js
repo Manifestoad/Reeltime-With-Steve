@@ -1,7 +1,7 @@
 const CATCH_LIMIT_KEY = 'reelTimeCatchLimits';
 
 // Helper to get all limits from localStorage
-const getAllLimits = (): Record<string, number> => {
+const getAllLimits = () => {
   try {
     const limits = localStorage.getItem(CATCH_LIMIT_KEY);
     return limits ? JSON.parse(limits) : {};
@@ -12,7 +12,7 @@ const getAllLimits = (): Record<string, number> => {
 };
 
 // Helper to save all limits to localStorage
-const saveAllLimits = (limits: Record<string, number>): void => {
+const saveAllLimits = (limits) => {
   try {
     localStorage.setItem(CATCH_LIMIT_KEY, JSON.stringify(limits));
   } catch (error) {
@@ -22,10 +22,10 @@ const saveAllLimits = (limits: Record<string, number>): void => {
 
 /**
  * Sets the daily catch limit for a specific fish.
- * @param fishName The name of the fish.
- * @param limit The catch limit. A value of 0 or less removes the limit.
+ * @param {string} fishName The name of the fish.
+ * @param {number} limit The catch limit. A value of 0 or less removes the limit.
  */
-export const setCatchLimit = (fishName: string, limit: number): void => {
+export const setCatchLimit = (fishName, limit) => {
   const allLimits = getAllLimits();
   if (limit > 0) {
     allLimits[fishName] = limit;
@@ -38,10 +38,10 @@ export const setCatchLimit = (fishName: string, limit: number): void => {
 
 /**
  * Retrieves the daily catch limit for a specific fish.
- * @param fishName The name of the fish.
- * @returns The limit as a number, or null if no limit is set.
+ * @param {string} fishName The name of the fish.
+ * @returns {number | null} The limit as a number, or null if no limit is set.
  */
-export const getCatchLimit = (fishName:string): number | null => {
+export const getCatchLimit = (fishName) => {
   const allLimits = getAllLimits();
   return allLimits[fishName] ?? null;
 }

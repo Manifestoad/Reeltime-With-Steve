@@ -1,15 +1,8 @@
 import React from 'react';
-import type { Weather } from '../types';
-import SpeakerIcon from './common/SpeakerIcon';
-import Card from './common/Card';
+import SpeakerIcon from './common/SpeakerIcon.jsx';
+import Card from './common/Card.jsx';
 
-interface WeatherCardProps {
-  weather: Weather;
-  onSpeak: (text: string) => void;
-  isSpeaking: boolean;
-}
-
-const WeatherCard: React.FC<WeatherCardProps> = ({ weather, onSpeak, isSpeaking }) => {
+const WeatherCard = ({ weather, onSpeak, isSpeaking }) => {
   const { temperature, condition, windSpeed, humidity, icon, barometer } = weather;
 
   const handleSpeak = () => {
@@ -17,7 +10,7 @@ const WeatherCard: React.FC<WeatherCardProps> = ({ weather, onSpeak, isSpeaking 
     onSpeak(text);
   };
 
-  const getBarometerIcon = (trend: string) => {
+  const getBarometerIcon = (trend) => {
     switch (trend.toLowerCase()) {
         case 'rising': return '📈';
         case 'falling': return '📉';

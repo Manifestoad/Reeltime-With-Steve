@@ -1,25 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import type { Fish, Location } from '../types';
-import SpeakerIcon from './common/SpeakerIcon';
-import Card from './common/Card';
-import { getCatchLimit, setCatchLimit } from '../services/catchLimitService';
-import { getTodaysCatches } from '../services/catchLogService';
+import SpeakerIcon from './common/SpeakerIcon.jsx';
+import Card from './common/Card.jsx';
+import { getCatchLimit, setCatchLimit } from '../services/catchLimitService.js';
+import { getTodaysCatches } from '../services/catchLogService.js';
 
-interface FishCardProps {
-  fish: Fish;
-  onSpeak: (text: string) => void;
-  isSpeaking: boolean;
-  onLogCatch: (fishName: string) => void;
-  onViewHistory: (fishName: string) => void;
-  location: Location | null;
-}
-
-const FishCard: React.FC<FishCardProps> = ({ fish, onSpeak, isSpeaking, onLogCatch, onViewHistory, location }) => {
+const FishCard = ({ fish, onSpeak, isSpeaking, onLogCatch, onViewHistory, location }) => {
   const { name, description, baitSuggestion } = fish;
   
-  const [limit, setLimit] = useState<number | null>(null);
-  const [limitInput, setLimitInput] = useState<string>('');
-  const [todaysCatches, setTodaysCatches] = useState<number>(0);
+  const [limit, setLimit] = useState(null);
+  const [limitInput, setLimitInput] = useState('');
+  const [todaysCatches, setTodaysCatches] = useState(0);
 
   const isLimitReached = limit !== null && todaysCatches >= limit;
 
