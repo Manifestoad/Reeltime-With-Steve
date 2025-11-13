@@ -31,8 +31,8 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // A one-time check for the API key to provide an immediate, clear error.
-    if (!process.env.API_KEY) {
+    // A one-time, safe check for the API key to provide an immediate, clear error.
+    if (typeof process === 'undefined' || !process.env.API_KEY) {
       setError('Configuration Error:\n\nYour Gemini API Key is missing. Please add the API_KEY to your Vercel project\'s Environment Variables and then redeploy the app from the Vercel dashboard.');
       setLoading('');
       return;
@@ -50,7 +50,7 @@ const App: React.FC = () => {
           setFishingData(data);
         } catch (err) {
           const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
-          if (errorMessage.includes('api key') || errorMessage.includes('api_key')) {
+          if (errorMessage.includes('api') && errorMessage.includes('key')) {
              setError('Configuration Error:\n\nYour Gemini API Key is missing or invalid. Please double-check the API_KEY in your Vercel project\'s Environment Variables and then redeploy the app.');
           } else {
             setError('Could not fetch fishing forecast. The AI might be busy, please try again later.');
@@ -74,7 +74,7 @@ const App: React.FC = () => {
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
-      if (errorMessage.includes('api key') || errorMessage.includes('api_key')) {
+      if (errorMessage.includes('api') && errorMessage.includes('key')) {
         setError('Configuration Error:\n\nYour Gemini API Key is missing or invalid. Please check your Vercel Environment Variables.');
       } else {
         console.error('Error with text-to-speech:', err);

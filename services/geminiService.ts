@@ -76,7 +76,7 @@ const fishingForecastSchema = {
 };
 
 export const getFishingForecast = async (location: Location): Promise<FishingData> => {
-  if (!process.env.API_KEY) {
+  if (typeof process === 'undefined' || !process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
   }
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -86,7 +86,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 
     The location is:
     Latitude: ${location.latitude}
-    Longitude: ${location.longitude}A
+    Longitude: ${location.longitude}
 
     Provide the following information:
     1.  **Weather**: The current, real-time weather conditions at this location, with temperature in Fahrenheit. Also include barometric pressure and its trend.
@@ -111,7 +111,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 };
 
 export const getTextToSpeechAudio = async (text: string): Promise<string | undefined> => {
-    if (!process.env.API_KEY) {
+    if (typeof process === 'undefined' || !process.env.API_KEY) {
         throw new Error("API_KEY environment variable not set");
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
