@@ -1,6 +1,17 @@
 import { GoogleGenAI, Type, Modality } from '@google/genai';
 import type { Location, FishingData } from '../types';
 
+// This function creates a new AI client instance. It assumes the API key exists 
+// because the main App.tsx component now verifies this on startup.
+const getAiInstance = () => {
+  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined;
+  if (!apiKey) {
+    // This error will be caught by the calling function in App.tsx if something goes wrong.
+    throw new Error('API Key is missing.');
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
 const fishingForecastSchema = {
   type: Type.OBJECT,
   properties: {
@@ -76,10 +87,7 @@ const fishingForecastSchema = {
 };
 
 export const getFishingForecast = async (location: Location): Promise<FishingData> => {
-  if (typeof process === 'undefined' || !process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-  }
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const ai = getAiInstance();
 
   const prompt = `
     You are an expert fishing and weather forecasting AI. Based on the provided geographical coordinates and today's date, generate a detailed fishing forecast in JSON format.
@@ -111,10 +119,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 };
 
 export const getTextToSpeechAudio = async (text: string): Promise<string | undefined> => {
-    if (typeof process === 'undefined' || !process.env.API_KEY) {
-        throw new Error("API_KEY environment variable not set");
-    }
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = getAiInstance();
     
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",

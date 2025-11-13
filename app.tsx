@@ -31,13 +31,22 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // A one-time, safe check for the API key to provide an immediate, clear error.
-    if (typeof process === 'undefined' || !process.env.API_KEY) {
-      setError('Configuration Error:\n\nYour Gemini API Key is missing. Please add the API_KEY to your Vercel project\'s Environment Variables and then redeploy the app from the Vercel dashboard.');
+    // This try...catch block is the most robust way to prevent a blank screen.
+    // It will catch any error during the initial API key check and render a 
+    // helpful message instead of crashing the app.
+    try {
+      const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : null;
+      if (!apiKey) {
+        // This specific error is thrown if the API key is missing.
+        throw new Error('API_KEY is not available.');
+      }
+      // If the key exists, we proceed to get the location.
+      requestLocation();
+    } catch (e) {
+      console.error("A critical startup error occurred:", e);
+      setError('Configuration Error:\n\nYour Gemini API Key is missing or misconfigured in this environment. Please add the API_KEY to your Vercel project\'s Environment Variables and then redeploy the app.');
       setLoading('');
-      return;
     }
-    requestLocation();
   }, [requestLocation]);
 
   useEffect(() => {
