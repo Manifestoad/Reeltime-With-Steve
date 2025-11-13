@@ -1,16 +1,41 @@
 import { GoogleGenAI, Type, Modality } from '@google/genai';
 import type { Location, FishingData } from '../types';
 
-// This function creates a new AI client instance. It assumes the API key exists 
-// because the main App.tsx component now verifies this on startup.
-const getAiInstance = () => {
-  const apiKey = typeof process !== 'undefined' && process.env ? process.env.API_KEY : undefined;
-  if (!apiKey) {
-    // This error will be caught by the calling function in App.tsx if something goes wrong.
-    throw new Error('API Key is missing.');
-  }
-  return new GoogleGenAI({ apiKey });
+let ai: GoogleGenAI | null = null;
+let apiKeyPromise: Promise<string> | null = null;
+
+// This function fetches the API key from our secure serverless endpoint
+const fetchApiKey = async (): Promise<string> => {
+    try {
+        const response = await fetch('/api/key');
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Failed to fetch API key');
+        }
+        const data = await response.json();
+        return data.apiKey;
+    } catch (error) {
+        console.error('Could not fetch API key:', error);
+        throw new Error('Could not retrieve API key from the server.');
+    }
 };
+
+// This function initializes the GoogleGenAI client with the fetched key.
+// It ensures we only fetch the key once and reuse the client.
+const getAiInstance = async (): Promise<GoogleGenAI> => {
+  if (ai) {
+    return ai;
+  }
+
+  if (!apiKeyPromise) {
+    apiKeyPromise = fetchApiKey();
+  }
+
+  const apiKey = await apiKeyPromise;
+  ai = new GoogleGenAI({ apiKey });
+  return ai;
+};
+
 
 const fishingForecastSchema = {
   type: Type.OBJECT,
@@ -87,7 +112,7 @@ const fishingForecastSchema = {
 };
 
 export const getFishingForecast = async (location: Location): Promise<FishingData> => {
-  const ai = getAiInstance();
+  const geminiAi = await getAiInstance();
 
   const prompt = `
     You are an expert fishing and weather forecasting AI. Based on the provided geographical coordinates and today's date, generate a detailed fishing forecast in JSON format.
@@ -105,7 +130,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
     Please adhere strictly to the provided JSON schema for your response.
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await geminiAi.models.generateContent({
     model: 'gemini-2.5-pro',
     contents: prompt,
     config: {
@@ -119,9 +144,9 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 };
 
 export const getTextToSpeechAudio = async (text: string): Promise<string | undefined> => {
-    const ai = getAiInstance();
+    const geminiAi = await getAiInstance();
     
-    const response = await ai.models.generateContent({
+    const response = await geminiAi.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: text }] }],
         config: {

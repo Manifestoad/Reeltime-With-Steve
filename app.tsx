@@ -15,6 +15,7 @@ const App: React.FC = () => {
 
   const requestLocation = useCallback(() => {
     setLoading('Getting your location...');
+    setError(null);
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setLocation({
@@ -30,23 +31,10 @@ const App: React.FC = () => {
     );
   }, []);
 
+  // This is now simplified. It just requests the location on startup.
+  // The complex API key checking is no longer needed here.
   useEffect(() => {
-    // This try...catch block is the most robust way to prevent a blank screen.
-    // It will catch any error during the initial API key check and render a 
-    // helpful message instead of crashing the app.
-    try {
-      const apiKey = (typeof process !== 'undefined' && process.env && process.env.API_KEY) ? process.env.API_KEY : null;
-      if (!apiKey) {
-        // This specific error is thrown if the API key is missing.
-        throw new Error('API_KEY is not available.');
-      }
-      // If the key exists, we proceed to get the location.
-      requestLocation();
-    } catch (e) {
-      console.error("A critical startup error occurred:", e);
-      setError('Configuration Error:\n\nYour Gemini API Key is missing or misconfigured in this environment. Please add the API_KEY to your Vercel project\'s Environment Variables and then redeploy the app.');
-      setLoading('');
-    }
+    requestLocation();
   }, [requestLocation]);
 
   useEffect(() => {
@@ -58,13 +46,16 @@ const App: React.FC = () => {
           const data = await getFishingForecast(location);
           setFishingData(data);
         } catch (err) {
-          const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
-          if (errorMessage.includes('api') && errorMessage.includes('key')) {
-             setError('Configuration Error:\n\nYour Gemini API Key is missing or invalid. Please double-check the API_KEY in your Vercel project\'s Environment Variables and then redeploy the app.');
-          } else {
-            setError('Could not fetch fishing forecast. The AI might be busy, please try again later.');
-          }
-          console.error(err);
+            if (err instanceof Error) {
+                if (err.message.toLowerCase().includes('api key')) {
+                    setError('Configuration Error:\n\nCould not get your Gemini API Key from the server. Please ensure the API_KEY is set correctly in your Vercel project\'s Environment Variables and redeploy.');
+                } else {
+                    setError(`Could not fetch fishing forecast: ${err.message}`);
+                }
+            } else {
+                setError('An unknown error occurred while fetching the forecast.');
+            }
+            console.error(err);
         } finally {
           setLoading('');
         }
@@ -82,13 +73,8 @@ const App: React.FC = () => {
         await playAudio(audioData);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
-      if (errorMessage.includes('api') && errorMessage.includes('key')) {
-        setError('Configuration Error:\n\nYour Gemini API Key is missing or invalid. Please check your Vercel Environment Variables.');
-      } else {
-        console.error('Error with text-to-speech:', err);
-        setError('Sorry, could not play audio.');
-      }
+      console.error('Error with text-to-speech:', err);
+      setError('Sorry, could not play audio. The API key might be misconfigured.');
     } finally {
       setIsSpeaking(false);
     }
