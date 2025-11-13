@@ -1,0 +1,21 @@
+{
+  "name": "Reel Time with Steve",
+  "short_name": "Reel Time",
+  "description": "Your AI-Powered Fishing Forecast",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/logo.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/logo.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

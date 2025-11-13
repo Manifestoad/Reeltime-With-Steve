@@ -1,0 +1,7 @@
+{
+  "name": "Reel Time with Steve",
+  "description": "A smart fishing assistant that provides real-time weather, predicts fish species based on your location, and even reads the forecast aloud. Get solunar times and bait suggestions to maximize your catch!",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
