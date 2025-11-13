@@ -86,7 +86,7 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 
     The location is:
     Latitude: ${location.latitude}
-    Longitude: ${location.longitude}
+    Longitude: ${location.longitude}A
 
     Provide the following information:
     1.  **Weather**: The current, real-time weather conditions at this location, with temperature in Fahrenheit. Also include barometric pressure and its trend.
