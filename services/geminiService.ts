@@ -1,12 +1,6 @@
 import { GoogleGenAI, Type, Modality } from '@google/genai';
 import type { Location, FishingData } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const fishingForecastSchema = {
   type: Type.OBJECT,
   properties: {
@@ -82,6 +76,11 @@ const fishingForecastSchema = {
 };
 
 export const getFishingForecast = async (location: Location): Promise<FishingData> => {
+  if (!process.env.API_KEY) {
+    throw new Error("API_KEY environment variable not set");
+  }
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
   const prompt = `
     You are an expert fishing and weather forecasting AI. Based on the provided geographical coordinates and today's date, generate a detailed fishing forecast in JSON format.
 
@@ -112,6 +111,11 @@ export const getFishingForecast = async (location: Location): Promise<FishingDat
 };
 
 export const getTextToSpeechAudio = async (text: string): Promise<string | undefined> => {
+    if (!process.env.API_KEY) {
+        throw new Error("API_KEY environment variable not set");
+    }
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    
     const response = await ai.models.generateContent({
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: text }] }],

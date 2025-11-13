@@ -31,6 +31,12 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // A one-time check for the API key to provide an immediate, clear error.
+    if (!process.env.API_KEY) {
+      setError('Configuration Error: Your Gemini API Key is missing. Please add the API_KEY to your Vercel project\'s Environment Variables and then redeploy the app from the Vercel dashboard.');
+      setLoading('');
+      return;
+    }
     requestLocation();
   }, [requestLocation]);
 
@@ -43,7 +49,12 @@ const App: React.FC = () => {
           const data = await getFishingForecast(location);
           setFishingData(data);
         } catch (err) {
-          setError('Could not fetch fishing forecast. The AI might be busy, please try again later.');
+          const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
+          if (errorMessage.includes('api key') || errorMessage.includes('api_key')) {
+             setError('Configuration Error: Your Gemini API Key is missing or invalid. Please double-check the API_KEY in your Vercel project\'s Environment Variables and then redeploy the app.');
+          } else {
+            setError('Could not fetch fishing forecast. The AI might be busy, please try again later.');
+          }
           console.error(err);
         } finally {
           setLoading('');
@@ -61,10 +72,14 @@ const App: React.FC = () => {
       if (audioData) {
         await playAudio(audioData);
       }
-    // Fix: Added curly braces to the catch block to correct the syntax error and ensure both statements are executed.
     } catch (err) {
-      console.error('Error with text-to-speech:', err);
-      setError('Sorry, could not play audio.');
+      const errorMessage = err instanceof Error ? err.message.toLowerCase() : '';
+      if (errorMessage.includes('api key') || errorMessage.includes('api_key')) {
+        setError('Configuration Error: Your Gemini API Key is missing or invalid. Please check your Vercel Environment Variables.');
+      } else {
+        console.error('Error with text-to-speech:', err);
+        setError('Sorry, could not play audio.');
+      }
     } finally {
       setIsSpeaking(false);
     }
@@ -82,9 +97,9 @@ const App: React.FC = () => {
 
     if (error) {
       return (
-        <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg">
+        <div className="text-center text-red-400 bg-red-900/50 p-6 rounded-lg max-w-2xl">
           <p className="font-bold text-xl mb-2">An Error Occurred</p>
-          <p>{error}</p>
+          <p className="text-left whitespace-pre-wrap">{error}</p>
           {error.includes("location") && (
              <button
               onClick={requestLocation}
